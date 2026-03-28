@@ -501,4 +501,54 @@ The integer-pointer pattern is already our IP (cogito-ergo patent-grade work). A
 
 ---
 
-*Next: Implement integer-pointer extraction for LPCI. Hard-clamped budget experiment (true fixed K tokens every turn). EXP-SF-02 on current results. Fix probe metrics.*
+### Information-Theoretic Analysis (pyitlib, scipy.stats)
+
+Full analysis script: `analyze_results.py`. Uses Kruskal-Wallis, Mann-Whitney U, mutual information (pyitlib), KL divergence, conditional entropy, transfer entropy.
+
+#### Matrix Run (575 trials)
+
+**Statistical significance:**
+- Scaffold condition affects score: Kruskal-Wallis H=19.28, **p=0.0007** (significant)
+- BUT pairwise: only quickthink vs naked is significant (p=0.00009, Δ=-0.175). All other conditions vs naked are **not significant** (contrastive p=0.36, full_scaffold p=0.24, hypothesis_artifacts p=0.70)
+- Scaffolds matter for **small models only**: 0.8b p=0.0008, 2b p=0.005, 4b p=0.92 (ns), 9b p=0.94 (ns)
+
+**Information-theoretic:**
+- MI(condition; score) = 0.060 bits → condition explains **4.2%** of score variation
+- MI(model; score) = 0.067 bits → model size explains **4.7%** of score variation
+- Almost identical predictive power. Both are small.
+- MI(condition; BC) = 0.229 bits → condition explains **12.7%** of BC variation. Scaffolds change output style more than correctness.
+
+**Honest take:** Scaffolds don't significantly improve score for models ≥4b. They hurt score on quickthink for small models (interference). They change behavioral complexity more than correctness. This is a steering/style effect, not a capability effect — consistent with the earlier reframing.
+
+#### LPCI A/B Test (40 turns)
+
+**KL divergence:**
+- Scaffolds diverge over time: symmetric KL goes from 0.20 (turn 1) → 0.48 (turn 20)
+- The two conditions produce increasingly different scaffolds from the same conversation
+
+**Mutual information — scaffold predicts response:**
+- Naked: MI = 0.49 bits, NMI = 25.7%
+- Compressed: MI = 0.24 bits, NMI = 12.7%
+- Naked scaffold is more informative about what the model will say. This may be because naked stores more verbose facts (71 vs 3) that directly appear in responses.
+
+**Scaffold → response token overlap:**
+- Naked mean: 12.4%, Compressed mean: 15.6%
+- Not significant (p=0.068). The scaffold vocabulary doesn't strongly predict response vocabulary — the model rephrases rather than echoing.
+
+**State accumulation (linear regression):**
+- Compressed token growth: +23.0 tokens/turn (R²=0.983, p≈0). Nearly perfect linear growth — NOT fixed budget.
+- Naked: +10.2 tokens/turn but R²=0.133 (noisy due to the hatchet trim at turn 18).
+
+**🔑 TRANSFER ENTROPY — the key finding:**
+- **Naked TE = 0.608 bits** — previous scaffold carries significant information about current response beyond what the current scaffold provides. The system is non-Markov: you need history to predict behavior.
+- **Compressed TE = 0.085 bits** — nearly Markov. Each scaffold is self-contained. Previous scaffold adds almost nothing.
+
+**What this means:** The compressed scaffold is a **better state representation**. It captures enough that the model's behavior at turn T is predicted by scaffold(T) alone, without needing scaffold(T-1). The naked scaffold leaks — the model at turn T depends on scaffold(T) AND scaffold(T-1), meaning the current scaffold is an incomplete state representation.
+
+This is the first information-theoretically grounded evidence that contrastive framing produces better *state completeness* in the scaffold, not just different classification of the same information.
+
+**This directly validates the LPCI thesis for the compressed condition:** if the scaffold is Markov (TE ≈ 0), then each turn truly only needs [scaffold + current message]. The scaffold IS the complete state. For naked, you'd need the scaffold AND some history — which defeats the point.
+
+---
+
+*Next: Hard-clamped budget experiment (true fixed K tokens). Integer-pointer extraction (cogito-ergo pattern). Scale test with compressed condition only (since it's the one that's actually Markov).*
