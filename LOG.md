@@ -453,4 +453,52 @@ This is still valuable — it means scaffold framing affects the quality of the 
 
 ---
 
-*Next: Fix probe metrics. Run EXP-SF-02 on these results (embed all 40 scaffolds, measure centroid drift per condition). Start EXP-SF-01. Per-token ablation.*
+### Critical Caveat: The Scaffold Was Growing, Not Fixed
+
+The test claimed "fixed budget, infinite session" but the scaffold was **not fixed**:
+- Naked: 365 → 988 tokens (then hatcheted to 437 at turn 18, grew back to 517)
+- Compressed: 343 → 789 tokens (never hit ceiling)
+
+This means we tested "growing scaffold with a safety valve," not true fixed-budget compression. The model saw more tokens each turn. It's better than full conversation history (which would be thousands of tokens by turn 20), but it's not the LPCI thesis.
+
+**What the test actually proved:** A stateless model can maintain coherence when fed a *structured summary* instead of conversation history. That's real and useful — but it's closer to "good summarization works" than "fixed-budget compression works."
+
+**True fixed-budget LPCI:** Scaffold is exactly K tokens at turn 1 AND turn 20. Compression happens every turn, not just when you hit a ceiling. The `_trim_to_budget` hatchet (drop oldest facts/vocab) is truncation, not compression. A true test needs a compression function that runs every turn and maintains K tokens.
+
+**What happened when the hatchet fired (naked, turn 17→18):**
+- Facts: 90 → 13 (lost 77 facts in one trim)
+- Vocab: 12 → 10
+- Tokens: 988 → 437
+- Model still answered probes at turns 18-20 — but was it using the remaining facts, or role-playing from residual structure?
+
+This needs a follow-up experiment with a hard-clamped budget from turn 1.
+
+### Connection: cogito-ergo Integer-Pointer Fidelity → LPCI Extraction
+
+**Key insight from cogito-ergo** (`~/Documents/projects/cogito-ergo/PENDING-PAPER.md`):
+
+When you ask an LLM to select/summarize memories, it corrupts them — paraphrase drift, hallucinated details, wrong entity names. cogito-ergo's solution: the filter LLM outputs **only integer indices**, and the server selects verbatim text by those indices. Fidelity is architectural, not instructional.
+
+**LPCI has the exact same problem.** The state extractor (qwen3.5:4b) currently:
+1. Reads the conversation turn
+2. Generates JSON strings describing state changes ("add_decisions": ["Vocabulary entries are permanent unless explicitly removed"])
+3. These generated strings go into the scaffold
+
+Step 2 is the corruption surface. The extractor rephrases, misclassifies (fact vs decision — naked got 71 facts/4 decisions, compressed got 3 facts/23 decisions from similar conversations), drops qualifiers, and invents specifics.
+
+**The fix is the same pattern:**
+1. Decompose the conversation turn into numbered statements (rules-based or small model)
+2. State extractor outputs only: `{"decisions": [1, 4], "facts": [2, 7], "drop": [3, 5, 6]}`
+3. Server selects verbatim text by index
+4. Scaffold stores original phrasing, not extractor-generated paraphrases
+
+This gives:
+- **Fidelity guarantee**: scaffold content is byte-for-byte what was in the conversation
+- **Classification without corruption**: extractor decides *what kind* of information it is, never generates content
+- **Auditable**: you can trace every scaffold entry back to the exact turn and statement it came from
+
+The integer-pointer pattern is already our IP (cogito-ergo patent-grade work). Applying it to LPCI's extraction pipeline is a natural extension and solves the classification drift problem we observed in the A/B test.
+
+---
+
+*Next: Implement integer-pointer extraction for LPCI. Hard-clamped budget experiment (true fixed K tokens every turn). EXP-SF-02 on current results. Fix probe metrics.*
