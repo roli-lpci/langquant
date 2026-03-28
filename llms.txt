@@ -1,0 +1,32 @@
+# LangQuant
+
+> Language State Compression and the Linguistically Persistent Cognitive Interface (LPCI).
+
+LangQuant proves that a stateless LLM can maintain full conversational coherence across 20 turns with zero conversation history. A structured language scaffold — refreshed every turn — is the sole state representation. Transfer entropy analysis confirms the scaffold is a complete Markov state (TE ≈ 0.085 bits).
+
+Key results:
+- 2.5x compression at turn 20 (789 tokens scaffold vs 1,945 tokens conversation)
+- Scaffold grows at ~23 tokens/turn vs ~97 tokens/turn for conversation history
+- Transfer entropy ≈ 0 proves scaffold is Markov (self-contained state)
+- Validated with qwen3.5:9b (main) + qwen3.5:4b (state extractor)
+
+Stack: Python 3.11+, Ollama (local), pyitlib + scipy for information-theoretic analysis.
+
+## Docs
+- [README](README.md): Full results, architecture, caveats, scaffold schema
+- [LOG](LOG.md): Complete development log with experiment details
+- [TODO](TODO.md): Future work and practical applications roadmap
+
+## Code
+- [lpci.py](lpci.py): Core prototype — SessionState, LPCISession, state extraction, scaffold refresh, interactive CLI
+- [lpci_test.py](lpci_test.py): A/B continuity test — 20 turns × 2 conditions, probes, scaffold evaluation, delta tracing
+- [analyze_results.py](analyze_results.py): Information-theoretic analysis — MI, KL divergence, transfer entropy
+- [run_experiment.py](run_experiment.py): Single-shot scaffold amplification harness (4 models × 5 conditions × 12 tasks × 3 runs)
+
+## Data
+- [results/lpci_ab_test.jsonl](results/lpci_ab_test.jsonl): LPCI proof data (40 rows)
+- [results/full_run_v1.jsonl](results/full_run_v1.jsonl): 619-trial matrix run
+- [tasks/task_set.jsonl](tasks/task_set.jsonl): Task definitions
+
+## Optional
+- [License](LICENSE): Apache 2.0

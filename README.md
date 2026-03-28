@@ -1,3 +1,10 @@
+<p align="center">
+  <a href="https://github.com/roli-lpci/langquant"><img src="https://img.shields.io/github/stars/roli-lpci/langquant" alt="GitHub stars"></a>
+  <a href="https://github.com/roli-lpci/langquant/blob/main/LICENSE"><img src="https://img.shields.io/github/license/roli-lpci/langquant" alt="License"></a>
+  <a href="https://github.com/roli-lpci/langquant"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python"></a>
+  <a href="https://github.com/roli-lpci/langquant/actions/workflows/ci.yml"><img src="https://github.com/roli-lpci/langquant/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+</p>
+
 # LangQuant
 
 ## LPCI: Statefulness Through Language for Stateless Models
@@ -201,6 +208,22 @@ Formulated ~summer 2025 as **Linguistically Persistent Cognitive Interface**:
 - **Cognitive** — does thinking-work (attention steering, probability reshaping), not just storage
 - **Interface** — sits between sessions and the stateless model
 
+## Hermes Labs Ecosystem
+
+LangQuant is part of the [Hermes Labs](https://hermes-labs.ai) open-source suite:
+
+- [**zer0dex**](https://github.com/roli-lpci/zer0dex) — Token-efficient memory architecture for persistent AI agents
+- [**little-canary**](https://github.com/roli-lpci/little-canary) — Prompt injection detection
+- [**lintlang**](https://github.com/roli-lpci/lintlang) — Static linter for AI agent configs
+- [**forgetted**](https://github.com/roli-lpci/forgetted) — Selective memory governance
+- [**zer0lint**](https://github.com/roli-lpci/zer0lint) — mem0 extraction diagnostics
+- [**suy-sideguy**](https://github.com/roli-lpci/suy-sideguy) — Autonomous agent watchdog
+- [**quickthink**](https://github.com/roli-lpci/quickthink) — Planning scaffolding for local LLMs
+
+---
+
+If LangQuant is useful to you, please [star the repo](https://github.com/roli-lpci/langquant) — it helps others find it.
+
 ## Citation
 
 If you use this work, please cite:
@@ -216,7 +239,7 @@ If you use this work, please cite:
 
 ## License
 
-MIT
+Apache 2.0
 
 ---
 
