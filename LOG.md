@@ -3,18 +3,18 @@
 ## 2026-03-28: Project Genesis
 
 ### Origin
-While evaluating [TurboQuant](https://github.com/0xSero/turboquant) (ICLR 2026 KV cache compression, cloned to `~/Documents/projects/turboquant/`), we realized the core math (Lloyd-Max quantization, QJL projection, unbiased estimators) could be repurposed at the **language level** rather than the tensor level.
+While evaluating [TurboQuant](https://github.com/0xSero/turboquant) (ICLR 2026 KV cache compression), we realized the core math (Lloyd-Max quantization, QJL projection, unbiased estimators) could be repurposed at the **language level** rather than the tensor level.
 
 **Core insight:** TurboQuant compresses KV cache bits to fit more context in VRAM. But language itself is a compression medium — a structured language state (scaffold) of N tokens, when "decompressed" by an LLM, produces behavior of complexity C where C >> N. The compression ratio C/N is measurable and optimizable.
 
 ### Prior Art (Our Own)
 This isn't new territory — we've been proving it empirically without naming it:
 
-- **TierJump** (`~/Documents/projects/tierjump/`) — 7 experiments (PF-001–PF-007) + Lane 2 series proving scaffolded Haiku beats raw Sonnet on eval, content, research tasks. Cost savings: 60-70% of tasks routable to cheapest tier.
-- **scaffold-independence** (`~/Documents/projects/scaffold-independence/`) — Contrastive markers: +18-27pp accuracy across Banking77/CLINC150/MASSIVE. Embedding centroid classification at 83.7% with zero LLM calls.
-- **QuickThink** (`~/Documents/projects/quickthink/`) — Compressed planning grammar (`g:;c:;s:;r:`) in 6-16 tokens. 30,900+ JSONL rows across 9 models, 30+ variants.
-- **Hypothesis Scaffold** (`~/Documents/projects/scaffold-independence/hypothesis-scaffold/`) — Zero-LLM recursive engine: 113 hypotheses in 70 seconds from structured artifacts. One calibration pass, then AI discarded.
-- **Epistemic Experiments** (`~/Documents/projects/epistemic-experiments/`) — Matched-pair probes showing same evidence under different linguistic framing → different model behavior. Published null-bias data on Zenodo.
+- **TierJump** — 7 experiments (PF-001–PF-007) + Lane 2 series proving scaffolded Haiku beats raw Sonnet on eval, content, research tasks. Cost savings: 60-70% of tasks routable to cheapest tier.
+- **scaffold-independence** — Contrastive markers: +18-27pp accuracy across Banking77/CLINC150/MASSIVE. Embedding centroid classification at 83.7% with zero LLM calls.
+- **QuickThink** — Compressed planning grammar (`g:;c:;s:;r:`) in 6-16 tokens. 30,900+ JSONL rows across 9 models, 30+ variants.
+- **Hypothesis Scaffold** — Zero-LLM recursive engine: 113 hypotheses in 70 seconds from structured artifacts. One calibration pass, then AI discarded.
+- **Epistemic Experiments** — Matched-pair probes showing same evidence under different linguistic framing → different model behavior. Published null-bias data on Zenodo.
 
 **Key TierJump finding (PF-006):** Scaffolding *broke* Haiku on operational tasks (0/9 total failure). Raw Haiku scored 7.4/10. This anomaly is unexplained — LangQuant's compression framework should predict it: injecting information the model already has = redundancy = interference.
 
@@ -31,7 +31,6 @@ TierJump proved the effect. LangQuant formalizes it:
 - **pyitlib** — lightweight entropy, MI, conditional entropy, KL divergence
 - **inspect-ai** — UK AISI behavioral eval framework (native Ollama support)
 - **scipy.stats** — significance testing
-- Venv: `~/Documents/projects/langquant/.venv/`
 
 ### Tools Evaluated & Declined
 - **dit** — build failed (pycddlib). pyitlib + infomeasure cover same ground.
@@ -42,10 +41,7 @@ TierJump proved the effect. LangQuant formalizes it:
 - **LLMLingua** — not the tool, but borrowing the per-token ablation methodology
 
 ### Experiment Harness Built
-`run_experiment.py` — reuses patterns from:
-- `epistemic-experiments/experiment_runner.py` (Ollama HTTP, JSON extraction, CSV streaming)
-- `quickthink/run_suite.py` (locking, manifests, JSONL streaming, resume)
-- `scaffold-independence/hedging_probe.py` (keyword detection patterns)
+`run_experiment.py` — reuses patterns from prior experiment infrastructure (Ollama HTTP, JSON extraction, CSV streaming, locking, manifests, JSONL streaming, resume, keyword detection).
 
 **5 scaffold conditions** (progressive richness):
 1. `naked` — raw prompt, no scaffold
@@ -60,9 +56,6 @@ TierJump proved the effect. LangQuant formalizes it:
 - 5 models × 5 conditions × 12 tasks × 3 runs = **900 trials** (full run)
 - Results → `results/run_results.jsonl`
 - Manifest → `results/run_manifest.json`
-
-### Handbook Entry
-Added as HC-05 in `~/.openclaw/workspace/HERMES-HANDBOOK.md` (2026-03-28).
 
 ### Smoke Test
 First run: `qwen3.5:0.8b`, conditions `naked` + `contrastive`, 2 tasks, 1 run each = 4 trials.
@@ -90,29 +83,26 @@ First run: `qwen3.5:0.8b`, conditions `naked` + `contrastive`, 2 tasks, 1 run ea
 
 ### Related Discovery: Existing Philosophical Foundations
 
-**Anchored Microgrammar Theory** (`~/Documents/projects/quickthink/docs/research/codex/philosophy/anchored_microgrammar_theory_(quickthink).md`):
+**Anchored Microgrammar Theory** (from QuickThink research docs):
 - Formalizes why QuickThink's `g:;c:;s:;r:` works — syntax as infrastructure for cognition, not formatting
 - Wittgensteinian language-games: meaning is use within a rule-governed practice
 - **Semantic Curvature Principle**: some tokens matter more than others. "Semantic curvature" = how much output changes when you edit one token. High-curvature fields (strategy, constraints) must survive compression. Low-curvature fields can be dropped.
 - Contains falsifiable hypothesis H2 that LangQuant can directly test: "perturbations in `s` produce larger answer deltas than perturbations in `g`"
 
-**OpenProse In-Context State** (`~/Desktop/Codex March 25 session/worktrees/craftclaw/extensions/open-prose/skills/prose/state/in-context.md`):
+**In-Context State** (from prior agent architecture work):
 - "What you say becomes what you remember" — the conversation history IS the VM's working memory
 - Structured narration with text-prefixed markers to persist state
 - This is the same thesis: language as persistent state for a stateless executor
 
-**OpenClaw Compaction** (`~/Desktop/Codex March 25 session/worktrees/craftclaw/docs/concepts/compaction.md`):
-- OpenClaw already has basic context compression: summarize older conversation + keep recent
+**Context Compaction** (from prior agent architecture):
+- An internal production system already has basic context compression: summarize older conversation + keep recent
 - LangQuant's rolling scaffold would replace this with *structured* compression rather than summarization
 
 ### Scaffold Router — Already Live in Production
 
-The scaffold router is **deployed and routing all OpenClaw traffic** as of 2026-03-24:
-- Hook: `~/.openclaw/workspace/hooks/model-router/handler.ts`
-- Python engine: `~/Documents/projects/scaffold-independence/model-router/src/router.py`
+The scaffold router is **deployed and routing all traffic in an internal production system** as of 2026-03-24:
 - 12 category centroids via nomic-embed-text, ~10ms routing
 - Per-category scaffold injection (eval_calibration, writing_constraints, contrastive, quickthink, etc.)
-- **Agent Gorgon = CraftClaw product fork** productizing this entire stack
 - Current accuracy: 73% (expected 88% after v7 centroid improvements)
 - Cost impact: ~12x reduction vs all-Opus baseline
 
@@ -134,7 +124,7 @@ The model is a pure function. It has no state, no memory, no continuity. The tex
 
 **"Take a bunch of empty words and make them mean something"** — this is what contrastive markers, scaffold grammars, and structured constraints do. Words that are meaningless in isolation ("This is NOT a summarization task") reshape the model's attention field and probability distribution. Empty words that do cognitive work.
 
-**Original docs:** In Google Docs under "LPCI" (confirmed via Chrome browser history traces). Not on local disk. Predates all current projects.
+**Original docs:** In Google Docs under "LPCI" (confirmed via browser history traces). Predates all current projects.
 
 **Lineage:** LPCI (philosophy, 2025) → QuickThink (compressed grammar, 2026) → scaffold-independence (empirical proof) → TierJump (production validation) → Anchored Microgrammar Theory (formalization) → LangQuant (information-theoretic measurement)
 
@@ -230,7 +220,7 @@ Items 1–3 are doable now. 4 is a day of work. 5 is research.
 
 The behavioral complexity composite (vocabulary richness, reasoning signals, hedging, structural markers) measures output in isolation. It doesn't measure the *relationship* between scaffold-in and behavior-out. "Richer" is subjective.
 
-**What we should be measuring — relational scaffold analysis (consistent with existing IP):**
+**What we should be measuring — relational scaffold analysis (consistent with existing work):**
 
 This is what scaffold-independence, epistemic experiments, and hypothesis scaffold already do:
 - scaffold-independence: contrastive marker in → correct classification out. Direct causal link.
@@ -253,18 +243,18 @@ This is scaffold-to-output mapping, not output-in-isolation scoring. The LPCI te
 
 ---
 
-### Connection: Signal-Fingerprint → Scaffold Compression
+### Connection: Embedding Centroids → Scaffold Compression
 
-**Discovery:** The "unbiased compression" question ("can a scaffold lose specifics but preserve behavioral distribution?") is already answered — by our own IP.
+**Discovery:** The "unbiased compression" question ("can a scaffold lose specifics but preserve behavioral distribution?") is already answered — by our own work.
 
-**Signal-fingerprint** (`~/Documents/projects/patents/signal-fingerprint/`): Patent for style-based user identification via embedding centroids. Takes N messages from a user, computes a 768-dim style centroid (nomic-embed-text), identifies the user from a *single new message* via cosine similarity. 92% top-1 accuracy, 2-3 messages minimum training. Content is discarded entirely — only the *style distribution* survives.
+**Embedding centroid methodology** (from prior work on style-based identification): Takes N messages from a user, computes a 768-dim style centroid (nomic-embed-text), identifies the user from a *single new message* via cosine similarity. 92% top-1 accuracy, 2-3 messages minimum training. Content is discarded entirely — only the *style distribution* survives.
 
 **This is lossy compression where the signal survives:**
 
 | System | Input | Compressed form | What's preserved | What's lost | Quality metric |
 |---|---|---|---|---|---|
 | TurboQuant | KV cache (16-bit) | 3-bit quantized | Attention scores | Precision | Unbiased estimator error |
-| Signal-fingerprint | N user messages | 768-dim centroid | Style distribution | Content | Cosine similarity (92% acc) |
+| Embedding centroid method | N user messages | 768-dim centroid | Style distribution | Content | Cosine similarity (92% acc) |
 | LPCI scaffold | N turns of history | K-token scaffold | Behavioral state | Verbatim history | ? (this is what we're testing) |
 
 The centroid IS the compressed representation. The cosine similarity threshold IS the reconstruction quality metric. The methodology already exists — it's applied to user identity, not conversation state. Yet.
@@ -273,9 +263,9 @@ The centroid IS the compressed representation. The cosine similarity threshold I
 
 **"Little numbers tell me about how you talk to AI"** — embedding vectors, centroid distances, cosine similarities. These are the language-level analogue of TurboQuant's quantized bits. Both preserve signal while dropping precision.
 
-### Experiment Specs: Signal-Fingerprint Methodology Applied to LPCI
+### Experiment Specs: Embedding Centroid Methodology Applied to LPCI
 
-These experiments extend our existing patent IP into the scaffold compression domain. Each builds on signal-fingerprint's core insight: small numerical representations can preserve behavioral distributions while discarding content.
+These experiments extend our existing embedding centroid work into the scaffold compression domain. Each builds on the core insight: small numerical representations can preserve behavioral distributions while discarding content.
 
 #### EXP-SF-01: Scaffold Embedding Fingerprint
 
@@ -290,7 +280,7 @@ These experiments extend our existing patent IP into the scaffold compression do
 
 **What this tells us:** If scaffold-space distance predicts response-space distance, then the scaffold IS a compressed representation of behavior (not just a prompt). If it doesn't, scaffolds are more like triggers than state.
 
-**Builds on:** Signal-fingerprint centroid methodology. Same embedding model, same cosine similarity framework.
+**Builds on:** Embedding centroid methodology. Same embedding model, same cosine similarity framework.
 **Effort:** Half a day. We have the embedding infrastructure.
 
 #### EXP-SF-02: Scaffold Centroid Stability (LPCI-specific)
@@ -306,9 +296,9 @@ These experiments extend our existing patent IP into the scaffold compression do
 
 **What this tells us:** Stable centroid = the scaffold is compressing consistently (preserving the same distribution). Drifting centroid = state is leaking or mutating. Sudden jumps = something broke (a probe, a contradiction, a topic pivot).
 
-**This is the scaffold equivalent of signal-fingerprint's user centroid.** A user's style centroid is stable because their writing style is stable. A scaffold's centroid should be stable if the scaffold is doing its job as state.
+**This is the scaffold equivalent of a user style centroid.** A user's style centroid is stable because their writing style is stable. A scaffold's centroid should be stable if the scaffold is doing its job as state.
 
-**Builds on:** Signal-fingerprint centroid computation + LPCI session infrastructure.
+**Builds on:** Embedding centroid computation + LPCI session infrastructure.
 **Effort:** Half a day. Embed scaffolds post-hoc from LPCI test output.
 
 #### EXP-SF-03: Minimum Viable Scaffold (Quantization Curve)
@@ -324,9 +314,9 @@ These experiments extend our existing patent IP into the scaffold compression do
 
 **What this tells us:** The compression curve. At what point does behavioral fidelity drop? Is there a cliff or a gradient? This is the language-level equivalent of TurboQuant's bit-precision experiments (16→8→4→3→2 bits).
 
-**Key metric:** Cosine similarity between response centroids at each compression level. When it drops below the signal-fingerprint identification threshold (~0.85), the scaffold has lost too much.
+**Key metric:** Cosine similarity between response centroids at each compression level. When it drops below the identification threshold (~0.85), the scaffold has lost too much.
 
-**Builds on:** Signal-fingerprint quality thresholds + scaffold-independence compression patterns.
+**Builds on:** Embedding centroid quality thresholds + scaffold-independence compression patterns.
 **Effort:** 1 day. Need to build the progressive compression pipeline.
 
 #### EXP-SF-04: Cross-Scaffold Unbiased Compression
@@ -344,7 +334,7 @@ These experiments extend our existing patent IP into the scaffold compression do
 
 **If this works:** It means you can run K cheap compressions and ensemble them for better fidelity than any single compression. That's a real compression technique with practical value.
 
-**Builds on:** Signal-fingerprint embedding comparison + TurboQuant unbiased estimator theory.
+**Builds on:** Embedding centroid comparison + TurboQuant unbiased estimator theory.
 **Effort:** 1-2 days. Most complex experiment — needs multiple compression strategies.
 
 #### EXP-SF-05: Behavioral Surface Mapping
@@ -362,14 +352,14 @@ These experiments extend our existing patent IP into the scaffold compression do
 
 **Connection to vocab_fingerprint_classifier.py:** That classifier maps failure modes to term-frequency signatures. This maps scaffolds to behavioral-embedding surfaces. Same idea, different domain.
 
-**Builds on:** scaffold-independence behavioral surface concept + signal-fingerprint embedding methodology.
+**Builds on:** scaffold-independence behavioral surface concept + embedding centroid methodology.
 **Effort:** 1 day.
 
-### IP Implications
+### Research Implications
 
-These experiments extend the signal-fingerprint patent's methodology into a new domain (scaffold compression). If EXP-SF-04 works (unbiased scaffold compression via ensemble), that's potentially patentable — it's a novel technique for preserving behavioral fidelity under lossy language compression. EXP-SF-02 (centroid stability as scaffold quality metric) could also be novel — no one is measuring scaffold quality via embedding drift.
+These experiments extend the embedding centroid methodology into a new domain (scaffold compression). If EXP-SF-04 works (unbiased scaffold compression via ensemble), that's potentially novel — it's a new technique for preserving behavioral fidelity under lossy language compression. EXP-SF-02 (centroid stability as scaffold quality metric) could also be novel — no one is measuring scaffold quality via embedding drift.
 
-The lineage: Signal-fingerprint (style preservation under content loss) → LangQuant/LPCI (behavioral preservation under history loss). Same math, new application.
+The lineage: Embedding centroids for style preservation (style preservation under content loss) → LangQuant/LPCI (behavioral preservation under history loss). Same math, new application.
 
 ---
 
@@ -473,11 +463,11 @@ This means we tested "growing scaffold with a safety valve," not true fixed-budg
 
 This needs a follow-up experiment with a hard-clamped budget from turn 1.
 
-### Connection: cogito-ergo Integer-Pointer Fidelity → LPCI Extraction
+### Connection: Integer-Pointer Fidelity → LPCI Extraction
 
-**Key insight from cogito-ergo** (`~/Documents/projects/cogito-ergo/PENDING-PAPER.md`):
+**Key insight from prior work on integer-pointer memory retrieval:**
 
-When you ask an LLM to select/summarize memories, it corrupts them — paraphrase drift, hallucinated details, wrong entity names. cogito-ergo's solution: the filter LLM outputs **only integer indices**, and the server selects verbatim text by those indices. Fidelity is architectural, not instructional.
+When you ask an LLM to select/summarize memories, it corrupts them — paraphrase drift, hallucinated details, wrong entity names. The solution: the filter LLM outputs **only integer indices**, and the server selects verbatim text by those indices. Fidelity is architectural, not instructional.
 
 **LPCI has the exact same problem.** The state extractor (qwen3.5:4b) currently:
 1. Reads the conversation turn
@@ -497,7 +487,7 @@ This gives:
 - **Classification without corruption**: extractor decides *what kind* of information it is, never generates content
 - **Auditable**: you can trace every scaffold entry back to the exact turn and statement it came from
 
-The integer-pointer pattern is already our IP (cogito-ergo patent-grade work). Applying it to LPCI's extraction pipeline is a natural extension and solves the classification drift problem we observed in the A/B test.
+The integer-pointer pattern solves the classification drift problem we observed in the A/B test.
 
 ---
 
@@ -539,7 +529,7 @@ Full analysis script: `analyze_results.py`. Uses Kruskal-Wallis, Mann-Whitney U,
 - Compressed token growth: +23.0 tokens/turn (R²=0.983, p≈0). Nearly perfect linear growth — NOT fixed budget.
 - Naked: +10.2 tokens/turn but R²=0.133 (noisy due to the hatchet trim at turn 18).
 
-**🔑 TRANSFER ENTROPY — the key finding:**
+**TRANSFER ENTROPY — the key finding:**
 - **Naked TE = 0.608 bits** — previous scaffold carries significant information about current response beyond what the current scaffold provides. The system is non-Markov: you need history to predict behavior.
 - **Compressed TE = 0.085 bits** — nearly Markov. Each scaffold is self-contained. Previous scaffold adds almost nothing.
 
@@ -551,4 +541,4 @@ This is the first information-theoretically grounded evidence that contrastive f
 
 ---
 
-*Next: Hard-clamped budget experiment (true fixed K tokens). Integer-pointer extraction (cogito-ergo pattern). Scale test with compressed condition only (since it's the one that's actually Markov).*
+*Next: Hard-clamped budget experiment (true fixed K tokens). Integer-pointer extraction. Scale test with compressed condition only (since it's the one that's actually Markov).*

@@ -3,7 +3,7 @@
 ## Active Experiments
 - [ ] Full matrix run: 4 models × 5 conditions × 12 tasks × 3 runs (running as of 2026-03-28)
 - [ ] Cross-architecture comparison: deepseek-r1:8b, gemma3:4b, mistral:7b (after main run)
-- [ ] Add qwen3.5:27b to the matrix (run on Lenovo Legion 5 Pro RTX 3070, or after M4 Max upgrade)
+- [ ] Add qwen3.5:27b to the matrix (run on dedicated GPU hardware)
 
 ## Core Research
 - [ ] Validate behavioral complexity metric against human judgment (is our composite meaningful?)
@@ -15,16 +15,16 @@
 ## Practical Applications (Priority Order)
 
 ### APP-01: Memory Compression Layer (MAYBE — needs experiment first)
-**What:** Compress retrieved mem0 facts into structured scaffolds before context injection.
+**What:** Compress retrieved memory facts into structured scaffolds before context injection.
 **Open question:** Is this just summarization, or does compressed memory actually steer behavior better than raw facts? Need to test before building.
-**Experiment idea (for cogito-ergo):** Retrieve 20 facts raw vs compressed scaffold → measure response quality on same task. If no difference, it's summarization and not worth it. If compressed steers better (especially on small models with tight context), that's a real finding.
+**Experiment idea:** Retrieve 20 facts raw vs compressed scaffold → measure response quality on same task. If no difference, it's summarization and not worth it. If compressed steers better (especially on small models with tight context), that's a real finding.
 **Status:** Parked. Focus is on continuity (APP-02) first.
 
 ### APP-02: Rolling Session Scaffold (Linguistic Persistence Layer)
 **What:** Fixed-budget language state (~500 tokens) that refreshes every N turns, replacing the growing context window paradigm. The model stays stateless; the scaffold IS the state.
 **Why:** Turn 100 stays as coherent as turn 1. Small models don't choke on 8000 tokens of diluted history. Context window becomes a feature, not a limitation.
-**Builds on:** Hypothesis Scaffold pattern (calibrate → artifacts → deterministic recursion). Early philosophical work on "linguistically persistent cognitive interface" (summer 2025 docs — see LOG.md for locations once found).
-**Effort:** 1-2 days for prototype. This is potentially the core Hermes Labs product.
+**Builds on:** Hypothesis Scaffold pattern (calibrate → artifacts → deterministic recursion). Early philosophical work on "linguistically persistent cognitive interface" (summer 2025 docs).
+**Effort:** 1-2 days for prototype. This is potentially the core product.
 **Architecture:**
   - After each turn: compress conversation into structured scaffold (could use small model or rules-based)
   - Before each turn: inject scaffold as prefix
@@ -32,12 +32,12 @@
   - Traditional: [turn1][turn2]...[turnN][current] — grows, dilutes
   - This: [scaffold: 500 tokens, refreshed][current turn] — fixed, dense
 
-### APP-03: Router → Scaffold Auto-Injection in OpenClaw
+### APP-03: Router → Scaffold Auto-Injection in Agent Pipeline
 **What:** Wire the existing centroid router (v7, live in production) to automatically select and inject the right scaffold per task type.
-**Why:** Every OpenClaw request gets the optimal scaffold without manual selection.
+**Why:** Every agent request gets the optimal scaffold without manual selection.
 **Builds on:** Centroid router v7 + TierJump scaffold type map (contrastive for classification, QuickThink for research, nothing for operational).
 **Effort:** Half a day. The pieces exist — just need wiring.
-**Note:** Scaffold router is already partially live as "agent gorgon" in OpenClaw.
+**Note:** Scaffold router is already partially live in the agent pipeline.
 
 ### APP-04: Context Window Multiplier
 **What:** Trade context window for scaffold density. 4k context with 500-token refreshing scaffold = functionally infinite session state.
@@ -51,6 +51,6 @@
 - [ ] "Linguistic Persistence: Fixed-Budget State Management for Stateless LLMs" — APP-02 as a paper
 
 ## Infrastructure
-- [ ] Set up LangQuant as a GitHub repo (roli-lpci/langquant)
+- [ ] Set up LangQuant as a public GitHub repo
 - [ ] Add Inspect AI evals for behavioral complexity validation
-- [ ] Build analysis/reporting script (like quickthink's report_suite.py) for LangQuant results
+- [ ] Build analysis/reporting script for LangQuant results

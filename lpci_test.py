@@ -37,7 +37,7 @@ INITIAL_VOCABULARY = {
 INITIAL_FACTS = [
     "We are building LangQuant — an information-theoretic framework for measuring language state compression",
     "TierJump proved scaffolded Haiku beats raw Sonnet on eval tasks (MAE 1.0 vs 1.2)",
-    "The scaffold router is live in OpenClaw production, routing all traffic through 12 centroid categories",
+    "A scaffold router is live in production, routing all traffic through 12 centroid categories",
     "Qwen3.5 scaling ladder: 0.8b, 2b, 4b, 9b available via Ollama",
     "Smoke test showed compression ratio of 10.05 on reasoning task with contrastive scaffold",
 ]
