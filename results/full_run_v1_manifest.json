@@ -1,0 +1,31 @@
+{
+  "experiment": "langquant",
+  "timestamp": "2026-03-28T06:02:59+00:00",
+  "git_sha": "c59413edf35d0793d60f518fe153c8250b760343",
+  "task_set_path": "tasks/task_set.jsonl",
+  "task_set_sha256": "9d7488e69f0bfd44b0e6dbe7958600782543e1fbcb5e1383f63fde110d528cd5",
+  "models": [
+    "qwen3.5:0.8b",
+    "qwen3.5:2b",
+    "qwen3.5:4b",
+    "qwen3.5:9b"
+  ],
+  "conditions": [
+    "naked",
+    "contrastive",
+    "quickthink",
+    "full_scaffold",
+    "hypothesis_artifacts"
+  ],
+  "runs_per_cell": 3,
+  "temperature": 0.7,
+  "task_count": 12,
+  "total_trials": 720,
+  "metrics": [
+    "task_score",
+    "bc_composite_score",
+    "scaffold_entropy",
+    "compression_ratio",
+    "latency_ms"
+  ]
+}
