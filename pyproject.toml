@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "langquant"
+version = "0.0.8"
+description = "LPCI: Statefulness Through Language for Stateless Models"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+authors = [
+    { name = "Rolando Bosch", email = "rbosch@lpci.ai" },
+]
+maintainers = [
+    { name = "Hermes Labs", email = "roli@hermes-labs.ai" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.urls]
+Homepage = "https://hermes-labs.ai"
+Repository = "https://github.com/roli-lpci/langquant"
