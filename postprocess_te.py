@@ -107,7 +107,7 @@ def main():
         by_condition[c].append(s)
 
     print(f"\n{'Condition':>12s}  {'TE mean':>8s}  {'TE std':>7s}  {'S-drift':>8s}  {'Recall':>7s}")
-    for c in ["naked", "compressed", "clamped", "baseline"]:
+    for c in ["raw", "naive", "naked", "compressed", "clamped"]:
         data = by_condition.get(c, [])
         if not data:
             continue

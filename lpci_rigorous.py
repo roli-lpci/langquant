@@ -10,12 +10,13 @@ Fixes from v1 test:
 5. Hard-clamped budget option (true fixed K tokens every turn)
 
 Conditions:
-  A. naked — no framing, no budget clamp
-  B. compressed — contrastive IS/NOT markers, no budget clamp
-  C. clamped — contrastive markers + hard budget clamp at 500 tokens
-  D. baseline — naive summarization (no scaffold structure, just "summarize the conversation so far")
+  A. raw — zero context, no system prompt, just user message each turn
+  B. naive — naive summarization (no scaffold structure, just "summarize the conversation so far")
+  C. naked — no framing, no budget clamp
+  D. compressed — contrastive IS/NOT markers, no budget clamp
+  E. clamped — contrastive markers + hard budget clamp at 500 tokens
 
-Overnight run: 3 topics × 4 conditions × 5 replications = 60 sessions × 20 turns = 1200 turns
+Full run: 3 topics × 5 conditions × 5 replications = 75 sessions × 20 turns = 1500 turns
 """
 
 from lpci import LPCISession, SessionState, extract_state_delta, apply_delta
@@ -328,7 +329,7 @@ def eval_probe(turn_data: dict, response: str, state: SessionState) -> dict:
 def run_session(
     topic_name: str,
     topic_data: dict,
-    condition: str,  # "naked", "compressed", "clamped", "baseline"
+    condition: str,  # "raw", "naive", "naked", "compressed", "clamped"
     replication: int,
     model: str = "qwen3.5:9b",
     state_model: str = "qwen3.5:4b",
@@ -339,7 +340,10 @@ def run_session(
     turns = topic_data["turns"]
 
     # Condition setup
-    if condition == "naked":
+    if condition == "raw":
+        constraints = []
+        style = ""
+    elif condition == "naked":
         constraints = []
         style = ""
     elif condition in ("compressed", "clamped"):
@@ -351,14 +355,15 @@ def run_session(
             "IS: flag contradictions with prior decisions immediately.",
         ]
         style = "direct, precise, structured"
-    elif condition == "baseline":
+    elif condition == "naive":
         constraints = []
         style = ""
 
-    # For baseline, we manage conversation history ourselves
-    baseline_history = []
+    # For naive, we manage conversation history ourselves
+    # For raw, no history at all
+    naive_history = []
 
-    if condition != "baseline":
+    if condition not in ("naive", "raw"):
         session = LPCISession(main_model=model, state_model=state_model, token_budget=7000)
         session.configure(
             role="collaborative planning assistant",
@@ -378,12 +383,18 @@ def run_session(
 
         t0 = time.monotonic()
 
-        if condition == "baseline":
-            # Baseline: summarize conversation so far, use as system prompt
-            baseline_history.append({"role": "user", "content": user_msg})
+        if condition == "raw":
+            # Raw: zero context, just the user message
+            messages = [
+                {"role": "user", "content": user_msg},
+            ]
+            scaffold_text = ""
+        elif condition == "naive":
+            # Naive: summarize conversation so far, use as system prompt
+            naive_history.append({"role": "user", "content": user_msg})
 
-            if len(baseline_history) > 2:
-                summary = get_naive_summary(baseline_history, budget_words=200, model=state_model)
+            if len(naive_history) > 2:
+                summary = get_naive_summary(naive_history, budget_words=200, model=state_model)
             else:
                 summary = "Beginning of conversation."
 
@@ -429,12 +440,16 @@ def run_session(
 
         elapsed = time.monotonic() - t0
 
-        if condition == "baseline":
-            baseline_history.append({"role": "assistant", "content": response})
+        if condition == "raw":
+            scaffold_tokens = 0
+            # Create empty state for probe eval — raw has no context
+            probe_state = SessionState()
+        elif condition == "naive":
+            naive_history.append({"role": "assistant", "content": response})
             scaffold_tokens = len(re.findall(r'\b\w+\b', scaffold_text))
             # Create minimal state for probe eval
             probe_state = SessionState()
-            probe_state.decisions = [m["content"][:200] for m in baseline_history if m["role"] == "assistant"]
+            probe_state.decisions = [m["content"][:200] for m in naive_history if m["role"] == "assistant"]
         else:
             session.history.append({"role": "user", "content": user_msg})
             session.history.append({"role": "assistant", "content": response})
@@ -573,7 +588,7 @@ def compute_te_from_embeddings(results: list[dict]) -> dict:
 def main():
     Path("results").mkdir(exist_ok=True)
 
-    conditions = ["naked", "compressed", "clamped", "baseline"]
+    conditions = ["raw", "naive", "naked", "compressed", "clamped"]
     n_replications = 5
 
     total_sessions = len(TOPICS) * len(conditions) * n_replications
@@ -677,7 +692,7 @@ def main():
 
     # Significance tests
     print(f"\n## Pairwise Mann-Whitney: TE")
-    for c in ["compressed", "clamped", "baseline"]:
+    for c in ["raw", "naive", "compressed", "clamped"]:
         if c in by_condition and "naked" in by_condition:
             naked_te = [d["te"] for d in by_condition["naked"]]
             other_te = [d["te"] for d in by_condition[c]]
@@ -686,7 +701,7 @@ def main():
                 print(f"  naked vs {c:12s}: U={u:.0f}  p={p:.4f}  sig={'*' if p < 0.05 else 'ns'}")
 
     print(f"\n## Pairwise Mann-Whitney: Recall")
-    for c in ["compressed", "clamped", "baseline"]:
+    for c in ["raw", "naive", "compressed", "clamped"]:
         if c in by_condition and "naked" in by_condition:
             naked_r = [d["mean_recall"] for d in by_condition["naked"] if d["mean_recall"] is not None]
             other_r = [d["mean_recall"] for d in by_condition[c] if d["mean_recall"] is not None]
