@@ -220,7 +220,7 @@ LangQuant is part of the [Hermes Labs](https://hermes-labs.ai) open-source suite
 - [**forgetted**](https://github.com/roli-lpci/forgetted) — Selective memory governance
 - [**zer0lint**](https://github.com/roli-lpci/zer0lint) — memory extraction diagnostics
 - [**suy-sideguy**](https://github.com/roli-lpci/suy-sideguy) — Autonomous agent watchdog
-- [**quickthink**](https://github.com/roli-lpci/quickthink) — Planning scaffolding for local LLMs
+- [**quickthink**](https://github.com/hermes-labs-ai/quickthink) — Planning scaffolding for local LLMs
 
 ---
 
