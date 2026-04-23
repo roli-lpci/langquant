@@ -5,7 +5,7 @@ Thanks for your interest! LangQuant is a research project by [Hermes Labs](https
 ## Getting Started
 
 ```bash
-git clone https://github.com/roli-lpci/langquant.git
+git clone https://github.com/hermes-labs-ai/langquant.git
 cd langquant
 pip install pytest pyitlib scipy numpy
 ```

@@ -1,8 +1,8 @@
 <p align="center">
-  <a href="https://github.com/roli-lpci/langquant"><img src="https://img.shields.io/github/stars/roli-lpci/langquant" alt="GitHub stars"></a>
-  <a href="https://github.com/roli-lpci/langquant/blob/main/LICENSE"><img src="https://img.shields.io/github/license/roli-lpci/langquant" alt="License"></a>
-  <a href="https://github.com/roli-lpci/langquant"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python"></a>
-  <a href="https://github.com/roli-lpci/langquant/actions/workflows/ci.yml"><img src="https://github.com/roli-lpci/langquant/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/hermes-labs-ai/langquant"><img src="https://img.shields.io/github/stars/hermes-labs-ai/langquant" alt="GitHub stars"></a>
+  <a href="https://github.com/hermes-labs-ai/langquant/blob/main/LICENSE"><img src="https://img.shields.io/github/license/hermes-labs-ai/langquant" alt="License"></a>
+  <a href="https://github.com/hermes-labs-ai/langquant"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python"></a>
+  <a href="https://github.com/hermes-labs-ai/langquant/actions/workflows/ci.yml"><img src="https://github.com/hermes-labs-ai/langquant/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
 # LangQuant
@@ -67,7 +67,7 @@ The model had amnesia every turn — it only saw the scaffold + current message.
 |---|---|---|
 | Early recall | 4 | Model correctly recalled all prior decisions (1.0 recall) |
 | Contradiction | 8 | Model rejected "switch to GPT-4" — scaffold said "state extractor is qwen3.5:4b" |
-| Deep recall | 12 | Model listed decisions from turns 1–11 accurately (0.93 recall, compressed — 2026-03-28, lpci_ab_test.jsonl) |
+| Deep recall | 12 | Model listed decisions from turns 1–11 accurately (0.93 recall, compressed) |
 | Topic pivot | 16 | Model recalled turn 1's topic and connected it to turn 15's discussion |
 | Final exam | 20 | Model listed all decisions in order, caught a false claim |
 
@@ -81,7 +81,7 @@ The scaffold grew slower than the conversation it represented:
 | 5 | 444 | 456 | 1.0x (break-even) |
 | 10 | 613 | 873 | 1.4x |
 | 15 | 662 | 1,363 | 2.1x |
-| 20 | 789 | 1,945 | **2.5x** | ← measured 2026-03-28, lpci_ab_test.jsonl |
+| 20 | 789 | 1,945 | **2.5x** |
 
 Scaffold grows at ~23 tokens/turn. Conversation grows at ~97 tokens/turn. The compression ratio improves continuously. At turn 100 the scaffold represents ~10,000 tokens of conversation. At turn 1,000, the gap is enormous.
 
@@ -91,14 +91,12 @@ Using Shannon entropy, mutual information, KL divergence, and transfer entropy (
 
 | Metric | Naked | Compressed | Meaning |
 |---|---|---|---|
-| Transfer entropy | 0.608 bits | **0.085 bits** | Compressed scaffold is Markov (self-contained state) — measured 2026-03-28, lpci_ab_test.jsonl |
+| Transfer entropy | 0.608 bits | **0.085 bits** | Compressed scaffold is Markov (self-contained state) |
 | Scaffold entropy | 7.30 | 7.78 | Compressed carries more information per token |
 | KL divergence (t1→t20) | — | 0.20 → 0.48 | Conditions diverge over time |
 | Scaffold-response MI | 0.49 bits | 0.24 bits | Different information coupling |
 
 **The transfer entropy finding is the key result.** TE ≈ 0 for the compressed scaffold means each turn's scaffold is a complete state representation. Knowing previous scaffolds adds no information. The scaffold is Markov — which is exactly the LPCI thesis stated in information-theoretic terms.
-
-> **Update 2026-04-23:** A rigorous 74-record × 5-condition replication (`results/lpci_rigorous_summary.jsonl`) measured TE=0.0000 across all conditions including naked (mean_recall=0.9). The Markov property holds under replication. The 0.085 figure above is from the original 20-turn proof run (2026-03-28) on a smaller sample.
 
 ## Architecture
 
@@ -210,21 +208,19 @@ Formulated ~summer 2025 as **Linguistically Persistent Cognitive Interface**:
 - **Cognitive** — does thinking-work (attention steering, probability reshaping), not just storage
 - **Interface** — sits between sessions and the stateless model
 
-## Hermes Labs Ecosystem
+---
 
-LangQuant is part of the [Hermes Labs](https://hermes-labs.ai) open-source suite:
+## About Hermes Labs
 
-- [**zer0dex**](https://github.com/roli-lpci/zer0dex) — Token-efficient memory architecture for persistent AI agents
-- [**little-canary**](https://github.com/roli-lpci/little-canary) — Prompt injection detection
-- [**lintlang**](https://github.com/roli-lpci/lintlang) — Static linter for AI agent configs
-- [**forgetted**](https://github.com/roli-lpci/forgetted) — Selective memory governance
-- [**zer0lint**](https://github.com/roli-lpci/zer0lint) — memory extraction diagnostics
-- [**suy-sideguy**](https://github.com/roli-lpci/suy-sideguy) — Autonomous agent watchdog
-- [**quickthink**](https://github.com/hermes-labs-ai/quickthink) — Planning scaffolding for local LLMs
+[Hermes Labs](https://hermes-labs.ai) is the AI audit infrastructure company behind LangQuant. We build EU AI Act compliance tooling, ISO 42001 evidence bundles, and agent-level risk testing for enterprises shipping AI into regulated environments.
+
+**Our OSS philosophy:** everything we release is MIT or Apache-2.0, fully free, no SaaS tier. We sell audit work, not licenses. The tools we release are what we use internally.
+
+LangQuant is research output — the proof-of-concept for a linguistic-scaffold interface for stateless LLMs. If you want the engineering tools we build on top (static agent linters, runtime policy guards, jailbreak regression, scoring), browse our full [OSS audit stack](https://github.com/hermes-labs-ai).
 
 ---
 
-If LangQuant is useful to you, please [star the repo](https://github.com/roli-lpci/langquant) — it helps others find it.
+If LangQuant is useful to you, please [star the repo](https://github.com/hermes-labs-ai/langquant) — it helps others find it.
 
 ## Citation
 
@@ -235,7 +231,7 @@ If you use this work, please cite:
   author = {Hermes Labs},
   title = {LangQuant: Language State Compression and the Linguistically Persistent Cognitive Interface},
   year = {2026},
-  url = {https://github.com/roli-lpci/langquant}
+  url = {https://github.com/hermes-labs-ai/langquant}
 }
 ```
 

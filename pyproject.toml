@@ -27,4 +27,4 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://hermes-labs.ai"
-Repository = "https://github.com/roli-lpci/langquant"
+Repository = "https://github.com/hermes-labs-ai/langquant"
