@@ -2,7 +2,6 @@
 """Resume lpci_rigorous.py — run next 10 sessions, appending to existing results."""
 
 import json
-from pathlib import Path
 
 # Load existing results
 existing_results = []

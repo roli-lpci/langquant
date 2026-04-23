@@ -13,7 +13,7 @@ import numpy as np
 from pathlib import Path
 
 # Reuse helpers from lpci_rigorous
-from lpci_rigorous import embed_text, cosine_similarity, compute_te_from_embeddings
+from lpci_rigorous import embed_text, compute_te_from_embeddings
 
 
 def main():
@@ -120,7 +120,7 @@ def main():
 
     # Significance tests
     from scipy import stats as sp_stats
-    print(f"\n## Mann-Whitney U: TE (naked vs each)")
+    print("\n## Mann-Whitney U: TE (naked vs each)")
     naked_te = [d["te"] for d in by_condition.get("naked", []) if d.get("te") is not None]
     for c in ["compressed", "clamped", "baseline"]:
         other_te = [d["te"] for d in by_condition.get(c, []) if d.get("te") is not None]
