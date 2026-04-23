@@ -1,8 +1,8 @@
 <p align="center">
-  <a href="https://github.com/roli-lpci/langquant"><img src="https://img.shields.io/github/stars/roli-lpci/langquant" alt="GitHub stars"></a>
-  <a href="https://github.com/roli-lpci/langquant/blob/main/LICENSE"><img src="https://img.shields.io/github/license/roli-lpci/langquant" alt="License"></a>
-  <a href="https://github.com/roli-lpci/langquant"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python"></a>
-  <a href="https://github.com/roli-lpci/langquant/actions/workflows/ci.yml"><img src="https://github.com/roli-lpci/langquant/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/hermes-labs-ai/langquant"><img src="https://img.shields.io/github/stars/hermes-labs-ai/langquant" alt="GitHub stars"></a>
+  <a href="https://github.com/hermes-labs-ai/langquant/blob/main/LICENSE"><img src="https://img.shields.io/github/license/hermes-labs-ai/langquant" alt="License"></a>
+  <a href="https://github.com/hermes-labs-ai/langquant"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python"></a>
+  <a href="https://github.com/hermes-labs-ai/langquant/actions/workflows/ci.yml"><img src="https://github.com/hermes-labs-ai/langquant/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
 # LangQuant
@@ -212,17 +212,17 @@ Formulated ~summer 2025 as **Linguistically Persistent Cognitive Interface**:
 
 LangQuant is part of the [Hermes Labs](https://hermes-labs.ai) open-source suite:
 
-- [**zer0dex**](https://github.com/roli-lpci/zer0dex) — Token-efficient memory architecture for persistent AI agents
-- [**little-canary**](https://github.com/roli-lpci/little-canary) — Prompt injection detection
-- [**lintlang**](https://github.com/roli-lpci/lintlang) — Static linter for AI agent configs
-- [**forgetted**](https://github.com/roli-lpci/forgetted) — Selective memory governance
-- [**zer0lint**](https://github.com/roli-lpci/zer0lint) — memory extraction diagnostics
-- [**suy-sideguy**](https://github.com/roli-lpci/suy-sideguy) — Autonomous agent watchdog
-- [**quickthink**](https://github.com/roli-lpci/quickthink) — Planning scaffolding for local LLMs
+- [**zer0dex**](https://github.com/hermes-labs-ai/zer0dex) — Token-efficient memory architecture for persistent AI agents
+- [**little-canary**](https://github.com/hermes-labs-ai/little-canary) — Prompt injection detection
+- [**lintlang**](https://github.com/hermes-labs-ai/lintlang) — Static linter for AI agent configs
+- [**forgetted**](https://github.com/hermes-labs-ai/forgetted) — Selective memory governance
+- [**zer0lint**](https://github.com/hermes-labs-ai/zer0lint) — memory extraction diagnostics
+- [**suy-sideguy**](https://github.com/hermes-labs-ai/suy-sideguy) — Autonomous agent watchdog
+- [**quickthink**](https://github.com/hermes-labs-ai/quickthink) — Planning scaffolding for local LLMs
 
 ---
 
-If LangQuant is useful to you, please [star the repo](https://github.com/roli-lpci/langquant) — it helps others find it.
+If LangQuant is useful to you, please [star the repo](https://github.com/hermes-labs-ai/langquant) — it helps others find it.
 
 ## Citation
 
@@ -233,7 +233,7 @@ If you use this work, please cite:
   author = {Hermes Labs},
   title = {LangQuant: Language State Compression and the Linguistically Persistent Cognitive Interface},
   year = {2026},
-  url = {https://github.com/roli-lpci/langquant}
+  url = {https://github.com/hermes-labs-ai/langquant}
 }
 ```
 
