@@ -208,17 +208,15 @@ Formulated ~summer 2025 as **Linguistically Persistent Cognitive Interface**:
 - **Cognitive** — does thinking-work (attention steering, probability reshaping), not just storage
 - **Interface** — sits between sessions and the stateless model
 
-## Hermes Labs Ecosystem
+---
 
-LangQuant is part of the [Hermes Labs](https://hermes-labs.ai) open-source suite:
+## About Hermes Labs
 
-- [**zer0dex**](https://github.com/hermes-labs-ai/zer0dex) — Token-efficient memory architecture for persistent AI agents
-- [**little-canary**](https://github.com/hermes-labs-ai/little-canary) — Prompt injection detection
-- [**lintlang**](https://github.com/hermes-labs-ai/lintlang) — Static linter for AI agent configs
-- [**forgetted**](https://github.com/hermes-labs-ai/forgetted) — Selective memory governance
-- [**zer0lint**](https://github.com/hermes-labs-ai/zer0lint) — memory extraction diagnostics
-- [**suy-sideguy**](https://github.com/hermes-labs-ai/suy-sideguy) — Autonomous agent watchdog
-- [**quickthink**](https://github.com/hermes-labs-ai/quickthink) — Planning scaffolding for local LLMs
+[Hermes Labs](https://hermes-labs.ai) is the AI audit infrastructure company behind LangQuant. We build EU AI Act compliance tooling, ISO 42001 evidence bundles, and agent-level risk testing for enterprises shipping AI into regulated environments.
+
+**Our OSS philosophy:** everything we release is MIT or Apache-2.0, fully free, no SaaS tier. We sell audit work, not licenses. The tools we release are what we use internally.
+
+LangQuant is research output — the proof-of-concept for a linguistic-scaffold interface for stateless LLMs. If you want the engineering tools we build on top (static agent linters, runtime policy guards, jailbreak regression, scoring), browse our full [OSS audit stack](https://github.com/hermes-labs-ai).
 
 ---
 
