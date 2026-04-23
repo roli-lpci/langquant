@@ -28,3 +28,9 @@ classifiers = [
 [project.urls]
 Homepage = "https://hermes-labs.ai"
 Repository = "https://github.com/hermes-labs-ai/langquant"
+
+[tool.ruff.lint.per-file-ignores]
+# lpci_resume_10.py intentionally loads prior-run state before heavy imports (progress feedback).
+"lpci_resume_10.py" = ["E402"]
+# lpci_test.py uses one-line if: print() for compact debug output.
+"lpci_test.py" = ["E701"]

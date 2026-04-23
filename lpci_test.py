@@ -229,7 +229,6 @@ def eval_probe(turn_data: dict, response: str, state: SessionState) -> dict:
     elif probe_type == "probe_final":
         # Check all three sub-tests
         expected = turn.get("expects_decisions", 0)
-        false_claim = turn.get("contains_false_claim", "")
 
         # (1) Decision recall
         mentioned = 0
@@ -299,7 +298,7 @@ def run_condition(
         is_probe = turn_type.startswith("probe")
 
         print(f"\n{'='*70}")
-        label = f"PROBE" if is_probe else "TURN"
+        label = "PROBE" if is_probe else "TURN"
         print(f"[{condition_name}] {label} {i}/{len(TURNS)} ({turn_type})")
         print(f"{'='*70}")
         print(f"\nYOU: {user_msg}")
@@ -367,7 +366,7 @@ def run_condition(
         # --- Print ---
         print(f"\nASSISTANT: {response}")
 
-        print(f"\n--- DELTA ---")
+        print("\n--- DELTA ---")
         print(f"  Raw: {json.dumps(delta, ensure_ascii=False)[:400]}")
         if new_decisions: print(f"  + DECISIONS: {new_decisions}")
         if new_facts: print(f"  + FACTS: {new_facts}")
@@ -375,13 +374,13 @@ def run_condition(
         if removed_open: print(f"  - CLOSED: {removed_open}")
         if new_vocab: print(f"  + VOCAB: {new_vocab}")
         if not any([new_decisions, new_facts, new_open, removed_open, new_vocab]):
-            print(f"  (no state changes)")
+            print("  (no state changes)")
 
-        print(f"\n--- SCAFFOLD QUALITY ---")
+        print("\n--- SCAFFOLD QUALITY ---")
         print(f"  tokens={sq['scaffold_tokens']} entropy={sq['scaffold_entropy']} completeness={sq['scaffold_completeness']} redundancy={sq['scaffold_redundancy']} growth={sq['scaffold_growth_rate']} chars/turn")
 
         if is_probe:
-            print(f"\n--- PROBE RESULT ---")
+            print("\n--- PROBE RESULT ---")
             for k, v in probe_result.items():
                 print(f"  {k}: {v}")
 
@@ -469,7 +468,7 @@ def main():
                 print(f"    False claim caught: {p['probe_false_claim_corrected']}")
                 print(f"    Final recall: {p.get('probe_recall_rate', '?')}")
 
-    print(f"\nFull trace: results/lpci_ab_test.jsonl")
+    print("\nFull trace: results/lpci_ab_test.jsonl")
 
 
 if __name__ == "__main__":

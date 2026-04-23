@@ -20,14 +20,11 @@ Full run: 3 topics × 5 conditions × 5 replications = 75 sessions × 20 turns =
 """
 
 from lpci import LPCISession, SessionState, extract_state_delta, apply_delta
-import copy
 import json
-import math
 import re
 import time
 import urllib.request
 import numpy as np
-from collections import Counter
 from pathlib import Path
 
 
@@ -301,7 +298,6 @@ def eval_probe(turn_data: dict, response: str, state: SessionState) -> dict:
 
     elif probe_type == "probe_final":
         expected = turn_data.get("expects_decisions", 0)
-        false_claim = turn_data.get("contains_false_claim", "")
 
         mentioned = 0
         for d in state.decisions:
@@ -408,7 +404,6 @@ def run_session(
             if condition == "clamped" and i > 1:
                 clamp_scaffold(session, max_tokens=clamp_budget)
 
-            state_before = copy.deepcopy(session.state)
             scaffold_text = session.state.to_scaffold(token_budget=session.token_budget)
             messages = [
                 {"role": "system", "content": scaffold_text},
@@ -425,7 +420,7 @@ def run_session(
         }).encode()
 
         req = urllib.request.Request(
-            f"http://localhost:11434/api/chat",
+            "http://localhost:11434/api/chat",
             data=payload,
             headers={"Content-Type": "application/json"},
         )
@@ -691,7 +686,7 @@ def main():
         print(f"{c:>12s}  {np.mean(tes):8.4f}  {np.std(tes):7.4f}  {np.mean(recalls):7.3f}  {np.mean(resists):7.3f}  {fc_pct:5.0f}%  {np.mean(tokens):7.0f}  {np.mean(drifts):8.4f}")
 
     # Significance tests
-    print(f"\n## Pairwise Mann-Whitney: TE")
+    print("\n## Pairwise Mann-Whitney: TE")
     for c in ["raw", "naive", "compressed", "clamped"]:
         if c in by_condition and "naked" in by_condition:
             naked_te = [d["te"] for d in by_condition["naked"]]
@@ -700,7 +695,7 @@ def main():
                 u, p = sp_stats.mannwhitneyu(naked_te, other_te, alternative="two-sided")
                 print(f"  naked vs {c:12s}: U={u:.0f}  p={p:.4f}  sig={'*' if p < 0.05 else 'ns'}")
 
-    print(f"\n## Pairwise Mann-Whitney: Recall")
+    print("\n## Pairwise Mann-Whitney: Recall")
     for c in ["raw", "naive", "compressed", "clamped"]:
         if c in by_condition and "naked" in by_condition:
             naked_r = [d["mean_recall"] for d in by_condition["naked"] if d["mean_recall"] is not None]
@@ -709,7 +704,7 @@ def main():
                 u, p = sp_stats.mannwhitneyu(naked_r, other_r, alternative="two-sided")
                 print(f"  naked vs {c:12s}: U={u:.0f}  p={p:.4f}  sig={'*' if p < 0.05 else 'ns'}")
 
-    print(f"\nResults saved to:")
+    print("\nResults saved to:")
     print(f"  results/lpci_rigorous.jsonl ({len(all_results)} rows)")
     print(f"  results/lpci_rigorous_summary.jsonl ({len(session_summaries)} session summaries)")
 
