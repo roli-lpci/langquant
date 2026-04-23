@@ -1,0 +1,14 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "type": "application",
+      "name": "langquant",
+      "version": "0.0.8",
+      "licenses": [{"license": {"id": "Apache-2.0"}}]
+    }
+  },
+  "components": []
+}

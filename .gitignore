@@ -5,3 +5,7 @@ __pycache__/
 .DS_Store
 results/lpci_rigorous*.jsonl
 results/rigorous_run*.log
+
+# Build artifacts
+*.egg-info/
+dist/

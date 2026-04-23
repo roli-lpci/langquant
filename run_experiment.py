@@ -26,10 +26,9 @@ import time
 import urllib.request
 import urllib.error
 from collections import Counter
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
@@ -159,13 +158,13 @@ def extract_json(text: str) -> dict | None:
     if m:
         try:
             return json.loads(m.group(1))
-        except json.JSONDecodeError:
+        except json.JSONDecodeError:  # silent — fall through to next extraction strategy
             pass
     m = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', text, re.DOTALL)
     if m:
         try:
             return json.loads(m.group(0))
-        except json.JSONDecodeError:
+        except json.JSONDecodeError:  # silent — fall through to whole-text parse
             pass
     try:
         return json.loads(text.strip())
@@ -304,9 +303,9 @@ def build_scaffold(condition: str, task: Task) -> ScaffoldState:
 
     elif condition == "quickthink":
         prefix = (
-            f"Before answering, create a compressed plan using this exact format:\n"
-            f"g:<goal in 3-5 words>;c:<key constraints>;s:<steps>;r:<core reasoning>\n\n"
-            f"Then provide your answer.\n"
+            "Before answering, create a compressed plan using this exact format:\n"
+            "g:<goal in 3-5 words>;c:<key constraints>;s:<steps>;r:<core reasoning>\n\n"
+            "Then provide your answer.\n"
         )
         return ScaffoldState(
             condition="quickthink",
@@ -431,7 +430,7 @@ def acquire_lock(lock_path: Path) -> None:
 def release_lock(lock_path: Path) -> None:
     try:
         lock_path.unlink()
-    except FileNotFoundError:
+    except FileNotFoundError:  # silent — idempotent: lock already released
         pass
 
 

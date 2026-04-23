@@ -22,7 +22,6 @@ import re
 import time
 import urllib.request
 from dataclasses import dataclass, field
-from typing import Optional
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
 

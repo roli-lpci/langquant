@@ -10,10 +10,8 @@ Analyzes:
 """
 
 import json
-import math
 import re
 from collections import Counter
-from pathlib import Path
 
 import numpy as np
 from scipy import stats
@@ -321,9 +319,9 @@ def analyze_lpci():
 
         print(f"  {cond:12s}: TE = {te:.4f} bits")
         if te > 0.1:
-            print(f"    → Previous scaffold state carries information about current response beyond current scaffold")
+            print("    → Previous scaffold state carries information about current response beyond current scaffold")
         else:
-            print(f"    → Previous scaffold state adds little beyond current scaffold (memoryless / Markov)")
+            print("    → Previous scaffold state adds little beyond current scaffold (memoryless / Markov)")
 
 
 if __name__ == "__main__":

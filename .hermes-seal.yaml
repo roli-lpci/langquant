@@ -1,0 +1,36 @@
+seal_version: 1
+repo: roli-lpci/langquant
+granted: '2026-04-20T17:05:58.088192Z'
+expires: '2027-04-20T17:05:58.088192Z'
+categories:
+  continuity:
+    health_endpoint: ''
+    graceful_degradation:
+    - dependency: ollama
+      on_failure: return_empty_state_delta
+      verified_by: tests/test_graceful_degrade.py::test_state_extraction_returns_empty_when_ollama_down
+      env: {}
+      python_bin: null
+      command: null
+  reliability:
+    test_command: python3 -m pytest -q tests/
+    coverage_min: 0.0
+    no_silent_failures: true
+    scan_paths: null
+    silent_failure_check: null
+  compliance:
+    license: Apache-2.0
+    sbom: sbom.cdx.json
+    lintlang_clean: false
+    eu_ai_act: passes
+  mom_ready:
+    install: pip install langquant
+    quickstart: README.md#quickstart
+    errors_human: true
+signing:
+  algorithm: ed25519
+  pubkey: ZlcXKr0v5/FgO5t9mODXmmpKx7ccAOio/OL5fvdIsZ0=
+  signature: qtdH9pqQUhaQPMlLPkYRgjrZpgpzGGul3IEWxoWsqHmwYUsyXWlmwVpE1rGUf20lgp9urmpIIeuRwLOvbejWBQ==
+  issuer: null
+revocation:
+  list: https://hermes-labs.ai/seal/revoked.json
